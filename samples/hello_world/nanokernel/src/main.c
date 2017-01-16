@@ -34,6 +34,7 @@
 
 void main(void)
 {
-	PRINT("Hello World! %s\n", CONFIG_ARCH);
+	PRINT("Hello World! %s, compiler by: %s.\n", CONFIG_ARCH, "allwinner");
+	return;
 }
 
