@@ -31,10 +31,63 @@
  * Nanokernel version of hello world demo
  */
 
+char __stack bufstack0[1024];
+char __stack bufstack1[1024];
+char __stack bufstack2[1024];
+extern void fiber_sleep(int32_t timeout_in_ticks);
+
+void task1(int arg1, int arg2);
+void task2(int arg1, int arg2);
+void task0(int arg1, int arg2)
+{
+       task_fiber_start(bufstack1, 1024, task1, (int)NULL, (int)NULL, 3, (unsigned)NULL);
+       task_fiber_start(bufstack2, 1024, task2, (int)NULL, (int)NULL, 3, (unsigned)NULL);
+       while(1)
+       {
+               /*fiber_sleep(100);*/
+               PRINT("%s, compiler by: %s.\n", __func__, "allwinner");
+               fiber_yield();
+       }
+
+       return;
+}
+
+void task1(int arg1, int arg2) 
+{
+       while(1)
+       {
+               /*fiber_sleep(100);*/
+               PRINT("%s, compiler by: %s.\n", __func__, "allwinner");
+               fiber_yield();
+       }
+
+       return;
+}
+
+void task2(int arg1, int arg2) 
+{
+       while(1)
+       {
+               /*fiber_sleep(100);*/
+               PRINT("%s, compiler by: %s.\n", __func__, "allwinner");
+               fiber_yield();
+       }
+
+       return;
+}
 
 void main(void)
 {
-	PRINT("Hello World! %s, compiler by: %s.\n", CONFIG_ARCH, "allwinner");
-	return;
+       PRINT("Hello World! %s, compiler by: %s.\n", CONFIG_ARCH, "allwinner");
+       
+       task_fiber_start(bufstack0, 1024, task0, (int)NULL, (int)NULL, 3, (unsigned)NULL);
+
+       while(1)
+       {
+               task_sleep(100);
+               PRINT("Hello World! %s, compiler by: %s.\n", CONFIG_ARCH, "allwinner");
+       }
+
+       return;
 }
 
