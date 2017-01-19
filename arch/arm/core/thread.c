@@ -152,6 +152,7 @@ void _new_thread(char *pStackMem, unsigned stackSize,
 
 	tcs->preempReg.psp = (uint32_t)pInitCtx;
 	tcs->basepri = 0;
+	tcs->slice = 10;
 
 	_nano_timeout_tcs_init(tcs);
 

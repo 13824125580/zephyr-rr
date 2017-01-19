@@ -171,6 +171,7 @@ struct tcs {
 	 */
 	struct preemp_float  preemp_float_regs;
 #endif
+	int slice;
 };
 
 struct s_NANO {

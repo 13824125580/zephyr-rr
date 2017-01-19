@@ -51,6 +51,8 @@
 extern struct nano_stack _k_command_stack;
 
 #endif /* CONFIG_MICROKERNEL */
+#include <nano_private.h>
+extern tNANO _nanokernel;
 
 /* running total of timer count */
 static uint32_t clock_accumulated_count;
@@ -331,6 +333,7 @@ void _TIMER_INT_HANDLER(void *unused)
 		_sys_power_save_idle_exit(numIdleTicks);
 	}
 
+
 	__asm__(" cpsie i"); /* re-enable interrupts (PRIMASK = 0) */
 
 #else /* !CONFIG_SYS_POWER_MANAGEMENT */
@@ -344,8 +347,28 @@ void _TIMER_INT_HANDLER(void *unused)
 	 */
 	_sys_clock_tick_announce();
 
+	if(--_nanokernel.current->slice == 0)
+	{
+		/*printk("%s line %d.\n", __func__, __LINE__);*/
+		_nanokernel.current->slice = 10;
+		if ((_nanokernel.fiber != (struct tcs *)NULL) && (_nanokernel.current->prio >= _nanokernel.fiber->prio))
+		{
+			_nano_fiber_ready(_nanokernel.current);
+			_tmo_premmpt();
+		}
+		/*fiber_yield();*/
+	}
+
 #endif /* CONFIG_SYS_POWER_MANAGEMENT */
 
+	/*
+	 *if(--_nanokernel.current->slice == 0)
+	 *{
+	 *        _nanokernel.current->slice = 10;
+	 *        [>_nano_fiber_ready(_nanokernel.current);<]
+	 *        fiber_yield();
+	 *}
+	 */
 	extern void _ExcExit(void);
 	_ExcExit();
 }

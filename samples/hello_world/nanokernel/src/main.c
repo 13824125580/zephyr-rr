@@ -24,6 +24,7 @@
 #define PRINT           printk
 #endif
 
+#include <nano_private.h>
 
 /*
  * @file
@@ -35,6 +36,8 @@ char __stack bufstack0[1024];
 char __stack bufstack1[1024];
 char __stack bufstack2[1024];
 extern void fiber_sleep(int32_t timeout_in_ticks);
+extern tNANO _nanokernel;
+extern char __noinit __stack main_task_stack[CONFIG_MAIN_STACK_SIZE];
 
 void task1(int arg1, int arg2);
 void task2(int arg1, int arg2);
@@ -45,8 +48,8 @@ void task0(int arg1, int arg2)
        while(1)
        {
                /*fiber_sleep(100);*/
-               PRINT("%s, compiler by: %s.\n", __func__, "allwinner");
-               fiber_yield();
+               PRINT("%s, compiler by: %s. nano.task = %p. main_stack = %p.\n", __func__, "allwinner", _nanokernel.task, main_task_stack);
+               /*fiber_yield();*/
        }
 
        return;
@@ -57,8 +60,8 @@ void task1(int arg1, int arg2)
        while(1)
        {
                /*fiber_sleep(100);*/
-               PRINT("%s, compiler by: %s.\n", __func__, "allwinner");
-               fiber_yield();
+               PRINT("%s, compiler by: %s. nano.task = %p. main_stack = %p.\n", __func__, "allwinner", _nanokernel.task, main_task_stack);
+               /*fiber_yield();*/
        }
 
        return;
@@ -69,8 +72,8 @@ void task2(int arg1, int arg2)
        while(1)
        {
                /*fiber_sleep(100);*/
-               PRINT("%s, compiler by: %s.\n", __func__, "allwinner");
-               fiber_yield();
+               PRINT("%s, compiler by: %s. nano.task = %p. main_stack = %p.\n", __func__, "allwinner", _nanokernel.task, main_task_stack);
+               /*fiber_yield();*/
        }
 
        return;
@@ -84,8 +87,8 @@ void main(void)
 
        while(1)
        {
-               task_sleep(100);
-               PRINT("Hello World! %s, compiler by: %s.\n", CONFIG_ARCH, "allwinner");
+               /*task_sleep(100);*/
+               PRINT("Hello World! %s, compiler by: %s. fiber = %p, task = %p.\n", CONFIG_ARCH, "allwinner", _nanokernel.fiber, _nanokernel.task);
        }
 
        return;

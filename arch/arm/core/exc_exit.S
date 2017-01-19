@@ -34,6 +34,7 @@
 _ASM_FILE_PROLOGUE
 
 GTEXT(_ExcExit)
+GTEXT(_tmo_premmpt)
 GTEXT(_IntExit)
 GDATA(_nanokernel)
 
@@ -77,6 +78,11 @@ SECTION_SUBSEC_FUNC(TEXT, _HandlerModeExit, _IntExit)
 
 /* _IntExit falls through to _ExcExit (they are aliases of each other) */
 
+SECTION_SUBSEC_FUNC(TEXT, _HandlerModeExit, _tmo_premmpt)
+    ldr r1, =_SCS_ICSR
+    ldr r2, =_SCS_ICSR_PENDSV
+    str r2, [r1]
+    bx lr
 
 /**
  *
