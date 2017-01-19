@@ -38,7 +38,7 @@ char __stack bufstack2[1024];
 extern void fiber_sleep(int32_t timeout_in_ticks);
 extern tNANO _nanokernel;
 extern char __noinit __stack main_task_stack[CONFIG_MAIN_STACK_SIZE];
-
+static struct nano_sem  sem;
 void task1(int arg1, int arg2);
 void task2(int arg1, int arg2);
 void task0(int arg1, int arg2)
@@ -48,7 +48,9 @@ void task0(int arg1, int arg2)
        while(1)
        {
                /*fiber_sleep(100);*/
+		nano_sem_take(&sem, TICKS_UNLIMITED);
                PRINT("%s, compiler by: %s. nano.task = %p. main_stack = %p.\n", __func__, "allwinner", _nanokernel.task, main_task_stack);
+		nano_sem_give(&sem);
                /*fiber_yield();*/
        }
 
@@ -60,7 +62,9 @@ void task1(int arg1, int arg2)
        while(1)
        {
                /*fiber_sleep(100);*/
+		nano_sem_take(&sem, TICKS_UNLIMITED);
                PRINT("%s, compiler by: %s. nano.task = %p. main_stack = %p.\n", __func__, "allwinner", _nanokernel.task, main_task_stack);
+		nano_sem_give(&sem);
                /*fiber_yield();*/
        }
 
@@ -72,7 +76,9 @@ void task2(int arg1, int arg2)
        while(1)
        {
                /*fiber_sleep(100);*/
+		nano_sem_take(&sem, TICKS_UNLIMITED);
                PRINT("%s, compiler by: %s. nano.task = %p. main_stack = %p.\n", __func__, "allwinner", _nanokernel.task, main_task_stack);
+		nano_sem_give(&sem);
                /*fiber_yield();*/
        }
 
@@ -82,6 +88,8 @@ void task2(int arg1, int arg2)
 void main(void)
 {
        PRINT("Hello World! %s, compiler by: %s.\n", CONFIG_ARCH, "allwinner");
+       nano_sem_init(&sem);
+       nano_sem_give(&sem);
        
        task_fiber_start(bufstack0, 1024, task0, (int)NULL, (int)NULL, 3, (unsigned)NULL);
 
