@@ -353,10 +353,13 @@ void _TIMER_INT_HANDLER(void *unused)
 		_nanokernel.current->slice = 10;
 		if ((_nanokernel.fiber != (struct tcs *)NULL) && (_nanokernel.current->prio >= _nanokernel.fiber->prio))
 		{
+#if 1
 			_nano_fiber_ready(_nanokernel.current);
 			_tmo_premmpt();
+#else
+			fiber_yield();
+#endif
 		}
-		/*fiber_yield();*/
 	}
 
 #endif /* CONFIG_SYS_POWER_MANAGEMENT */
